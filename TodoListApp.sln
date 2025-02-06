@@ -13,11 +13,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		user-stories.md = user-stories.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoListApp.WebApp", "TodoListApp.WebApp\TodoListApp.WebApp.csproj", "{BA144B67-B580-45D9-BE9C-FF18C77F1DF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoListApp.WebApi", "TodoListApp.WebApi\TodoListApp.WebApi.csproj", "{F3906565-F06E-41A7-A03A-406753FD19E6}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {71075FF6-34FF-4DFB-BBA7-7654CC357608}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F3906565-F06E-41A7-A03A-406753FD19E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3906565-F06E-41A7-A03A-406753FD19E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3906565-F06E-41A7-A03A-406753FD19E6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F3906565-F06E-41A7-A03A-406753FD19E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3906565-F06E-41A7-A03A-406753FD19E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA144B67-B580-45D9-BE9C-FF18C77F1DF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA144B67-B580-45D9-BE9C-FF18C77F1DF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA144B67-B580-45D9-BE9C-FF18C77F1DF7}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{BA144B67-B580-45D9-BE9C-FF18C77F1DF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA144B67-B580-45D9-BE9C-FF18C77F1DF7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 EndGlobal
