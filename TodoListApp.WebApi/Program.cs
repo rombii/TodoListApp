@@ -20,6 +20,8 @@ builder.Services.AddDbContext<TodoListUserDbContext>(opts =>
 
 builder.Services.AddScoped<ITodoListDatabaseService, TodoListDatabaseService>();
 
+builder.Services.AddAutoMapper(typeof(Program));
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -35,3 +37,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+// TODO
+// Remaining controllers
+// use mappers
+// exception middleware
+// authorize (tokens)
+// fluent validation

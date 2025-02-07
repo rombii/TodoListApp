@@ -3,6 +3,7 @@ using TodoListApp.WebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.WebApi.Models;
 using TodoListApp.WebApi.Models.Put;
+using TodoListApp.WebApi.Models.Post;
 
 [ApiController]
 [Route("/api/[controller]")]
@@ -23,7 +24,7 @@ public class TodoListController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateTodoListAsync([FromBody] TodoListModel todoList)
+    public async Task<IActionResult> CreateTodoListAsync([FromBody] TodoListPostModel todoList)
     {
         await this.dbService.CreateTodoListAsync(todoList);
         return this.Ok();
@@ -36,7 +37,7 @@ public class TodoListController : ControllerBase
         return this.Ok();
     }
 
-    [HttpDelete("{listId}")]
+    [HttpDelete("{listId:guid}")]
     public async Task<IActionResult> DeleteTodoListAsync(Guid listId)
     {
         await this.dbService.DeleteTodoListAsync(listId);

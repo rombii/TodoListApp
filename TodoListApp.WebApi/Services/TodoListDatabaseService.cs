@@ -2,6 +2,7 @@
 using TodoListApp.WebApi.Data;
 using TodoListApp.WebApi.Entities;
 using TodoListApp.WebApi.Models;
+using TodoListApp.WebApi.Models.Post;
 using TodoListApp.WebApi.Models.Put;
 using TodoListApp.WebApi.Services.Interfaces;
 
@@ -24,7 +25,7 @@ public class TodoListDatabaseService : ITodoListDatabaseService
         return (await Task.WhenAll(tasks)).ToList();
     }
 
-    public async Task CreateTodoListAsync(TodoListModel todoList)
+    public async Task CreateTodoListAsync(TodoListPostModel todoList)
     {
         var entity = new TodoListEntity
         {
@@ -45,6 +46,10 @@ public class TodoListDatabaseService : ITodoListDatabaseService
             .Where(todoListEntity => todoListEntity.Id == todoList.Id)
             .FirstOrDefaultAsync();
 
+        // TODO
+        // replace this with
+        // a) middleware to catch all exceptions
+        // b) return null and return response accordingly
         if (entity == null)
         {
             throw new Exception("Todo list not found");
@@ -73,6 +78,8 @@ public class TodoListDatabaseService : ITodoListDatabaseService
 
     private static async Task<TodoListModel> MapToModelAsync(TodoListEntity entity)
     {
+        // TODO
+        // Change this to use AutoMapper like in TodoTask
         return await Task.Run(() => new TodoListModel
         {
             Id = entity.Id,
