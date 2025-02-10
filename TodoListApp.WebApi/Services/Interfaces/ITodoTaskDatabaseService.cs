@@ -5,13 +5,15 @@ using TodoListApp.WebApi.Models.Put;
 
 public interface ITodoTaskDatabaseService
 {
-    Task<List<TodoTaskModel>> GetTasksForTodoListAsync(Guid listId);
+    Task<List<TodoTaskModel>> GetTasksForTodoListAsync(Guid listId, string? issuer);
 
-    Task<TodoTaskWithCommentsModel?> GetTask(Guid id);
+    Task<TodoTaskWithCommentsModel> GetTask(Guid id, string? issuer);
 
-    Task CreateTodoTaskAsync(TodoTaskPostModel model);
+    Task CreateTodoTaskAsync(TodoTaskPostModel model, string? issuer);
 
-    Task DeleteTodoTaskAsync(Guid id);
+    Task DeleteTodoTaskAsync(Guid id, string? issuer);
 
-    Task UpdateTodoTaskAsync(TodoTaskPutModel model);
+    Task UpdateTodoTaskAsync(TodoTaskPutModel model, string? issuer);
+
+    Task<List<TodoTaskModel>> GetOverdueTasksForUserAsync(string? issuer);
 }

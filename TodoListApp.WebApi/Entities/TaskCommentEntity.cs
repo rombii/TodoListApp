@@ -10,5 +10,10 @@ public class TaskCommentEntity
 
     public string Comment { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
+    [ForeignKey("Task")]
     public Guid TaskId { get; set; }
+
+    public TodoTaskEntity Task { get; set; }
 }

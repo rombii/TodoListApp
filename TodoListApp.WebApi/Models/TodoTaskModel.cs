@@ -14,8 +14,6 @@ public class TodoTaskModel
 
     public Guid ListId { get; set; }
 
-    public Guid CreatedBy { get; set; }
-
     public List<TaskTagModel> Tags { get; set; }
 
 }

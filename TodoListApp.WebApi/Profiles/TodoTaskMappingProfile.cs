@@ -5,9 +5,9 @@ using TodoListApp.WebApi.Models;
 using TodoListApp.WebApi.Models.Post;
 
 
-public class MappingProfile : Profile
+public class TodoTaskMappingProfile : Profile
 {
-    public MappingProfile()
+    public TodoTaskMappingProfile()
     {
         this.CreateMap<TodoTaskEntity, TodoTaskModel>()
             .ForMember(dest => dest.Tags, opt => opt.MapFrom(src =>

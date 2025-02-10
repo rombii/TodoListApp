@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿namespace TodoListApp.WebApi.Services;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TodoListApp.WebApi.Data;
 using TodoListApp.WebApi.Entities;
 using TodoListApp.WebApi.Models;
@@ -6,87 +8,131 @@ using TodoListApp.WebApi.Models.Post;
 using TodoListApp.WebApi.Models.Put;
 using TodoListApp.WebApi.Services.Interfaces;
 
+
 public class TodoListDatabaseService : ITodoListDatabaseService
 {
-    private readonly TodoListDbContext dbContext;
+    private readonly TodoListDbContext listDbContext;
+    private readonly TodoListUserDbContext userDbContext;
+    private readonly IMapper mapper;
 
-    public TodoListDatabaseService(TodoListDbContext dbContext)
+    public TodoListDatabaseService(TodoListDbContext listDbContext, TodoListUserDbContext userDbContext, IMapper mapper)
     {
-        this.dbContext = dbContext;
+        this.listDbContext = listDbContext;
+        this.userDbContext = userDbContext;
+        this.mapper = mapper;
     }
 
-    public async Task<List<TodoListModel>> GetTodoListsCreatedByUserAsync(Guid userId)
+    public async Task<List<TodoListModel>> GetTodoListsCreatedForUserAsync(string? issuer)
     {
-        var entities = await this.dbContext.TodoList
-            .Where(todoList => todoList.CreatedBy == userId)
+        if (issuer == null)
+        {
+            throw new UnauthorizedAccessException("Unauthorized");
+        }
+
+        var entities = await this.listDbContext.TodoList
+            .Where(todoList => this.listDbContext.ListRole
+                .Any(role => role.ListId == todoList.Id && role.User == issuer))
             .ToListAsync();
 
-        var tasks = entities.Select(MapToModelAsync);
-        return (await Task.WhenAll(tasks)).ToList();
+
+        return this.mapper.Map<List<TodoListModel>>(entities);
     }
 
-    public async Task CreateTodoListAsync(TodoListPostModel todoList)
+    public async Task CreateTodoListAsync(TodoListPostModel todoList, string? issuer)
     {
+        this.ValidateUser(issuer);
+        var listGuid = Guid.NewGuid();
         var entity = new TodoListEntity
         {
-            Id = Guid.NewGuid(),
+            Id = listGuid,
             Title = todoList.Title,
             Description = todoList.Description,
-            CreatedBy = todoList.CreatedBy,
             CreatedDate = DateTime.UtcNow,
         };
 
-        await this.dbContext.TodoList.AddAsync(entity);
-        await this.dbContext.SaveChangesAsync();
+        var role = new TodoListRoleEntity
+        {
+            Id = Guid.NewGuid(),
+            User = issuer,
+            ListId = listGuid,
+            RoleId = (await this.listDbContext.Role.FirstAsync(role => role.Role == "Owner")).Id,
+        };
+
+        await this.listDbContext.TodoList.AddAsync(entity);
+        await this.listDbContext.ListRole.AddAsync(role);
+        await this.listDbContext.SaveChangesAsync();
     }
 
-    public async Task UpdateTodoListAsync(TodoListPutModel todoList)
+    public async Task UpdateTodoListAsync(TodoListPutModel todoList, string? issuer)
     {
-        var entity = await this.dbContext.TodoList
+        var entity = await this.listDbContext.TodoList
             .Where(todoListEntity => todoListEntity.Id == todoList.Id)
             .FirstOrDefaultAsync();
 
-        // TODO
-        // replace this with
-        // a) middleware to catch all exceptions
-        // b) return null and return response accordingly
         if (entity == null)
         {
-            throw new Exception("Todo list not found");
+            throw new KeyNotFoundException("Todo list not found");
+        }
+
+        if (issuer == null)
+        {
+            throw new UnauthorizedAccessException("Unauthorized");
+        }
+
+        var role = await this.listDbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
+            role.ListId == entity.Id && role.User == issuer);
+
+        if (role == null || role.Role.Role != "Owner")
+        {
+            throw new UnauthorizedAccessException("Unauthorized");
         }
 
         entity.Title = todoList.Title;
         entity.Description = todoList.Description;
 
-        await this.dbContext.SaveChangesAsync();
+        await this.listDbContext.SaveChangesAsync();
     }
 
-    public async Task DeleteTodoListAsync(Guid listId)
+    public async Task DeleteTodoListAsync(Guid listId, string? issuer)
     {
-        var entity = await this.dbContext.TodoList
+        var entity = await this.listDbContext.TodoList
             .Where(todoListEntity => todoListEntity.Id == listId)
             .FirstOrDefaultAsync();
 
         if (entity == null)
         {
-            throw new Exception("Todo list not found");
+            throw new KeyNotFoundException("Todo list not found");
         }
 
-        this.dbContext.TodoList.Remove(entity);
-        await this.dbContext.SaveChangesAsync();
+        if (issuer == null)
+        {
+            throw new UnauthorizedAccessException("Unauthorized");
+        }
+
+        var role = await this.listDbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
+            role.ListId == entity.Id && role.User == issuer);
+
+        if (role == null || role.Role.Role != "Owner")
+        {
+            throw new UnauthorizedAccessException("Unauthorized");
+        }
+
+        this.listDbContext.TodoList.Remove(entity);
+        await this.listDbContext.SaveChangesAsync();
     }
 
-    private static async Task<TodoListModel> MapToModelAsync(TodoListEntity entity)
+    private void ValidateUser(string? issuer)
     {
-        // TODO
-        // Change this to use AutoMapper like in TodoTask
-        return await Task.Run(() => new TodoListModel
+        if (issuer == null)
         {
-            Id = entity.Id,
-            Title = entity.Title,
-            Description = entity.Description,
-            CreatedBy = entity.CreatedBy,
-            CreatedDate = entity.CreatedDate,
-        });
+            throw new UnauthorizedAccessException("Unauthorized");
+        }
+
+        var user = this.userDbContext.Users.FirstOrDefaultAsync(user => user.Login == issuer);
+
+        if (user == null)
+        {
+            throw new UnauthorizedAccessException("Unauthorized");
+        }
     }
 }

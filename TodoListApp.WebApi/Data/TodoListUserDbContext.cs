@@ -1,5 +1,7 @@
 ﻿namespace TodoListApp.WebApi.Data;
 using Microsoft.EntityFrameworkCore;
+using TodoListApp.WebApi.Entities;
+
 
 public class TodoListUserDbContext : DbContext
 {
@@ -7,4 +9,6 @@ public class TodoListUserDbContext : DbContext
         : base(options)
     {
     }
+
+    public DbSet<TodoListUserEntity> Users { get; set; }
 }

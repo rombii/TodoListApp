@@ -18,10 +18,9 @@ public class TodoListEntity
     public string Description { get; set; }
 
     [Required]
-    public Guid CreatedBy { get; set; }
-
-    [Required]
     public DateTime CreatedDate { get; set; }
 
-    public List<TodoTaskEntity> Tasks { get; set; }
+    public List<TodoListRoleEntity> ListRoles { get; set; }
+
+    public List<TaskTagEntity> Tags { get; set; }
 }

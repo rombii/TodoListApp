@@ -19,12 +19,10 @@ public class TodoTaskEntity
 
     public DateTime DueDate { get; set; }
 
-    [ForeignKey("TodoListEntity")]
+    [ForeignKey("List")]
     public Guid ListId { get; set; }
 
     public TodoListEntity List { get; set; }
-
-    public Guid CreatedBy { get; set; }
 
     public List<TaskCommentEntity> Comments { get; set; }
 

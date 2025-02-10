@@ -1,10 +1,13 @@
 ﻿namespace TodoListApp.WebApi.Controllers;
+using System.Security.Claims;
 using TodoListApp.WebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using TodoListApp.WebApi.Models;
 using TodoListApp.WebApi.Models.Put;
 using TodoListApp.WebApi.Models.Post;
 
+[Authorize]
 [ApiController]
 [Route("/api/[controller]")]
 public class TodoListController : ControllerBase
@@ -16,31 +19,35 @@ public class TodoListController : ControllerBase
         this.dbService = dbService;
     }
 
-    [HttpGet("{userId:guid}")]
-    public async Task<IActionResult> GetTodoListsCreatedByUserAsync(Guid userId)
+    [HttpGet]
+    public async Task<IActionResult> GetTodoListsCreatedByUserAsync()
     {
-        var todoLists = await this.dbService.GetTodoListsCreatedByUserAsync(userId);
+        var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var todoLists = await this.dbService.GetTodoListsCreatedForUserAsync(userLogin);
         return this.Ok(todoLists);
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateTodoListAsync([FromBody] TodoListPostModel todoList)
     {
-        await this.dbService.CreateTodoListAsync(todoList);
-        return this.Ok();
+        var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        await this.dbService.CreateTodoListAsync(todoList, userLogin);
+        return this.NoContent();
     }
 
     [HttpPut]
     public async Task<IActionResult> UpdateTodoListAsync([FromBody] TodoListPutModel todoList)
     {
-        await this.dbService.UpdateTodoListAsync(todoList);
-        return this.Ok();
+        var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        await this.dbService.UpdateTodoListAsync(todoList, userLogin);
+        return this.NoContent();
     }
 
     [HttpDelete("{listId:guid}")]
     public async Task<IActionResult> DeleteTodoListAsync(Guid listId)
     {
-        await this.dbService.DeleteTodoListAsync(listId);
-        return this.Ok();
+        var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        await this.dbService.DeleteTodoListAsync(listId, userLogin);
+        return this.NoContent();
     }
 }

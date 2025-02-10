@@ -5,11 +5,11 @@ using TodoListApp.WebApi.Models;
 
 public interface ITodoListDatabaseService
 {
-    Task<List<TodoListModel>> GetTodoListsCreatedByUserAsync(Guid userId);
+    Task<List<TodoListModel>> GetTodoListsCreatedForUserAsync(string? issuer);
 
-    Task CreateTodoListAsync(TodoListPostModel todoList);
+    Task CreateTodoListAsync(TodoListPostModel todoList, string? issuer);
 
-    Task UpdateTodoListAsync(TodoListPutModel todoList);
+    Task UpdateTodoListAsync(TodoListPutModel todoList, string? issuer);
 
-    Task DeleteTodoListAsync(Guid listId);
+    Task DeleteTodoListAsync(Guid listId, string? issuer);
 }
