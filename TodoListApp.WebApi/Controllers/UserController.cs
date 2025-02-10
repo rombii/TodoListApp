@@ -1,6 +1,7 @@
-﻿
-namespace TodoListApp.WebApi.Controllers;
+﻿namespace TodoListApp.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using TodoListApp.WebApi.Generators;
 using TodoListApp.WebApi.Services.Interfaces;
 using TodoListApp.WebApi.Models;
@@ -40,9 +41,12 @@ public class UserController : ControllerBase
         return this.Ok(token);
     }
 
+    [Authorize]
     [HttpPut("logout")]
     public async Task<IActionResult> Logout()
     {
+        var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        await this.service.Logout(userLogin);
         return this.Ok();
     }
 
