@@ -1,6 +1,5 @@
-﻿using TodoListApp.WebApp.Services;
-
-namespace TodoListApp.WebApp.Controllers;
+﻿namespace TodoListApp.WebApp.Controllers;
+using TodoListApp.WebApp.Services;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.WebApp.Models.Post;
