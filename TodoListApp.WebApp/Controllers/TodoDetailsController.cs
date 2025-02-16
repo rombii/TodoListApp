@@ -1,5 +1,6 @@
 ﻿namespace TodoListApp.WebApp.Controllers;
 using System.Text.Json;
+using TodoListApp.WebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.WebApp.Models.Post;
 using TodoListApp.WebApp.Models.Put;
@@ -7,11 +8,11 @@ using TodoListApp.WebApp.Services;
 
 public class TaskDetailsController : Controller
 {
-    private readonly CommentService commentService;
-    private readonly TagService tagService;
-    private readonly TodoTaskService taskService;
+    private readonly ICommentService commentService;
+    private readonly ITagService tagService;
+    private readonly ITodoTaskService taskService;
 
-    public TaskDetailsController(CommentService commentService, TagService tagService, TodoTaskService taskService)
+    public TaskDetailsController(ICommentService commentService, ITagService tagService, ITodoTaskService taskService)
     {
         this.commentService = commentService;
         this.tagService = tagService;

@@ -1,5 +1,6 @@
 ﻿namespace TodoListApp.WebApp.Controllers;
 using System.Net;
+using TodoListApp.WebApp.Services.Interfaces;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.WebApp.Models;
@@ -9,9 +10,9 @@ using TodoListApp.WebApp.Services;
 
 public class AuthController : Controller
 {
-    private readonly AuthService authService;
+    private readonly IAuthService authService;
 
-    public AuthController(AuthService authService)
+    public AuthController(IAuthService authService)
     {
         this.authService = authService;
     }

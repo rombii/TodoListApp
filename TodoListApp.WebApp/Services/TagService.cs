@@ -1,13 +1,15 @@
 ﻿namespace TodoListApp.WebApp.Services;
 using System.Text.Json;
 using TodoListApp.WebApp.Models;
+using System.Text;
+using TodoListApp.WebApp.Models.Post;
 using TodoListApp.WebApp.Services.Interfaces;
 
 public class TagService : ITagService
 {
-    private readonly ServiceHelper helper;
+    private readonly IServiceHelper helper;
 
-    public TagService(ServiceHelper helper)
+    public TagService(IServiceHelper helper)
     {
         this.helper = helper;
     }
@@ -23,6 +25,20 @@ public class TagService : ITagService
         }
 
         return Array.Empty<TaskTagModel>();
+    }
+
+    public async Task AddTagAsync(TaskTagPostModel model)
+    {
+        var response = await this.helper.CallApiWithTokenAsync(async client => await client.PostAsync(
+           "api/tasssktag",
+           new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json")));
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task RemoveTagAsync(Guid tagId)
+    {
+        var response = await this.helper.CallApiWithTokenAsync(async client => await client.DeleteAsync($"api/TaskTag/{tagId}"));
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task<HttpResponseMessage> AssignTagToTaskAsync(Guid taskId, Guid tagId)

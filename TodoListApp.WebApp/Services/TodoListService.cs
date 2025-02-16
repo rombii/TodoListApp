@@ -8,9 +8,9 @@ using TodoListApp.WebApp.Services.Interfaces;
 
 public class TodoListService : ITodoListService
 {
-    private readonly ServiceHelper helper;
+    private readonly IServiceHelper helper;
 
-    public TodoListService(ServiceHelper helper)
+    public TodoListService(IServiceHelper helper)
     {
         this.helper = helper;
     }

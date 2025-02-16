@@ -1,9 +1,10 @@
 ﻿namespace TodoListApp.WebApp.Services;
 using System.Net.Http.Headers;
+using TodoListApp.WebApp.Services.Interfaces;
 using TodoListApp.WebApp.Models;
 using System.Text.Json;
 
-public class ServiceHelper
+public class ServiceHelper : IServiceHelper
 {
     private readonly HttpClient httpClient;
     private readonly IHttpContextAccessor httpContextAccessor;
@@ -14,12 +15,12 @@ public class ServiceHelper
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    private async Task<string?> GetAccessTokenAsync()
+    public async Task<string?> GetAccessTokenAsync()
     {
         return this.httpContextAccessor.HttpContext.Session.GetString("AccessToken");
     }
 
-    private async Task RefreshTokenAsync()
+    public async Task RefreshTokenAsync()
     {
         var accessToken = this.httpContextAccessor.HttpContext.Session.GetString("AccessToken");
         var response = await this.httpClient.GetAsync($"api/user/token/{accessToken}");

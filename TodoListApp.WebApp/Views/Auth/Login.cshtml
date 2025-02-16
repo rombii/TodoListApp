@@ -35,9 +35,8 @@
     <h2>Login</h2>
     <form asp-action="Login" method="post">
         <div class="form-group">
-            <label asp-for="Login" class="control-label">
-                <input asp-for="Login" class="form-control" style="height: 38px;" />
-            </label>
+            <label asp-for="Login" class="control-label"></label>
+            <input asp-for="Login" class="form-control" style="height: 38px;" />
             <span asp-validation-for="Login" class="text-danger"></span>
         </div>
 

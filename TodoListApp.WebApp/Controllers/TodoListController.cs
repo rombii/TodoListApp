@@ -1,5 +1,6 @@
 ﻿namespace TodoListApp.WebApp.Controllers;
 using TodoListApp.WebApp.Services;
+using TodoListApp.WebApp.Services.Interfaces;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.WebApp.Models.Post;
@@ -7,9 +8,9 @@ using TodoListApp.WebApp.Models.Put;
 
 public class TodoListController : Controller
 {
-    private readonly TodoListService todoListService;
+    private readonly ITodoListService todoListService;
 
-    public TodoListController(TodoListService todoListService)
+    public TodoListController(ITodoListService todoListService)
     {
         this.todoListService = todoListService;
     }

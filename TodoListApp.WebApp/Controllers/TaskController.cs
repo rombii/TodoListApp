@@ -1,5 +1,8 @@
 ﻿namespace TodoListApp.WebApp.Controllers;
 using System.Net;
+using TodoListApp.WebApp.Services.Interfaces;
+using TodoListApp.WebApp.Models;
+using TodoListApp.WebApp.Models.Post;
 using TodoListApp.WebApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.WebApi.Models;
@@ -7,11 +10,13 @@ using TodoListApp.WebApp.Models.Put;
 
 public class TaskController : Controller
 {
-    private readonly TodoTaskService taskService;
+    private readonly ITodoTaskService taskService;
+    private readonly ITagService tagService;
 
-    public TaskController(TodoTaskService taskService)
+    public TaskController(ITodoTaskService taskService, ITagService tagService)
     {
         this.taskService = taskService;
+        this.tagService = tagService;
     }
 
     [HttpGet]
@@ -25,6 +30,8 @@ public class TaskController : Controller
                 {
                     var tasks = await this.taskService.GetTasksForTodoListAsync(todoListId.Value);
                     this.ViewBag.TodoListId = todoListId.Value;
+                    var tags = await this.tagService.GetTagsForListAsync(todoListId.Value);
+                    this.ViewBag.Tags = tags;
                     return this.View(tasks);
                 }
                 else
@@ -103,6 +110,35 @@ public class TaskController : Controller
             return this.RedirectToAction("Overdue");
         }
 
+        return this.RedirectToAction("Index", new { todoListId = listId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddTagToList(string tagName, Guid listId)
+    {
+        if (string.IsNullOrEmpty(tagName))
+        {
+            this.ModelState.AddModelError("TagName", "Tag name is required.");
+            return this.RedirectToAction("Index", new { listId });
+        }
+
+        var tag = new TaskTagPostModel
+        {
+            Tag = tagName,
+            ListId = listId,
+        };
+
+        await this.tagService.AddTagAsync(tag);
+
+        return this.RedirectToAction("Index", new { todoListId = listId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveTagFromList(Guid tagId, Guid listId)
+    {
+        await this.tagService.RemoveTagAsync(tagId);
         return this.RedirectToAction("Index", new { todoListId = listId });
     }
 }

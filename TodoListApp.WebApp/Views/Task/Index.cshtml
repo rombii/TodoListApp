@@ -7,6 +7,24 @@
 .overdue-task {
     box-shadow: 0 4px 12px rgba(255, 0, 0, 0.5);
 }
+.tag-picker-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.tag-picker {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    text-align: center;
+}
 </style>
 
 <h1>Tasks</h1>
@@ -63,9 +81,44 @@ else
         </div>
     }
 </div>
-
 @if (ViewBag.TodoListId != null)
 {
+    <h2>Tags for List</h2>
+    <div class="d-flex overflow-auto" style="max-width: 100%;">
+        @foreach (var tag in ViewBag.Tags)
+        {
+            <span class="badge bg-primary me-2">
+                @tag.Tag
+                <form asp-action="RemoveTagFromList" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="listId" value="@ViewBag.TodoListId" />
+                    <input type="hidden" name="tagId" value="@tag.Id" />
+                    <button type="submit" class="btn btn-link text-danger">✖</button>
+                </form>
+            </span>
+        }
+
+        <!-- Button to Show Tag Picker -->
+        <button type="button" class="btn btn-outline-primary" onclick="showTagPicker()">➕</button>
+    </div>
+
+    <!-- Tag Picker Modal (Hidden Initially) -->
+    <div id="tag-picker-overlay" class="tag-picker-overlay" style="display:none;">
+        <div class="tag-picker">
+            <h5>Select a Tag</h5>
+            <h2>Add New Tag</h2>
+            <form asp-action="AddTagToList" method="post" class="mb-4">
+                <input type="hidden" name="ListId" value="@ViewBag.TodoListId" />
+                <div class="mb-3">
+                    <label for="tagName" class="form-label">Tag Name</label>
+                    <input id="tagName" type="text" name="TagName" class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-primary">Add Tag</button>
+            </form>
+            <button type="button" class="btn btn-secondary mt-3" onclick="hideTagPicker()">Cancel</button>
+        </div>
+    </div>
+
     <h2>Create New Task</h2>
     <form asp-action="Create" method="post" class="mb-4">
         <input type="hidden" name="ListId" value="@ViewBag.TodoListId" />
@@ -128,5 +181,11 @@ else
 
     function hideDeleteModal() {
         document.getElementById('deleteModal').style.display = 'none';
+    }
+    function showTagPicker() {
+        document.getElementById('tag-picker-overlay').style.display = 'flex';
+    }
+    function hideTagPicker() {
+        document.getElementById('tag-picker-overlay').style.display = 'none';
     }
 </script>

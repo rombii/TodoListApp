@@ -6,9 +6,9 @@ using TodoListApp.WebApp.Models.Put;
 
 public class CommentService : ICommentService
 {
-    private readonly ServiceHelper helper;
+    private readonly IServiceHelper helper;
 
-    public CommentService(ServiceHelper helper)
+    public CommentService(IServiceHelper helper)
     {
         this.helper = helper;
     }
