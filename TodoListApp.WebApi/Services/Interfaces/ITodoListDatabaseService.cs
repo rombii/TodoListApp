@@ -5,7 +5,7 @@ using TodoListApp.WebApi.Models;
 
 public interface ITodoListDatabaseService
 {
-    Task<List<TodoListModel>> GetTodoListsCreatedForUserAsync(string? issuer);
+    Task<List<TodoListModel>> GetTodoListsForUserAsync(string? issuer);
 
     Task CreateTodoListAsync(TodoListPostModel todoList, string? issuer);
 

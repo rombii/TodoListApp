@@ -27,7 +27,7 @@ public class TodoListUserDatabaseService : ITodoListUserDatabaseService
 
     public async Task<TodoListUserModel> Login(TodoListUserLoginModel model)
     {
-        var user = this.dbContext.Users.FirstOrDefault(user => user.Login == model.Login);
+        var user = await this.dbContext.Users.FirstOrDefaultAsync(user => user.Login == model.Login);
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
         {
@@ -52,7 +52,7 @@ public class TodoListUserDatabaseService : ITodoListUserDatabaseService
         await this.dbContext.SaveChangesAsync();
     }
 
-    public async Task<string> RefreshToken(string accessToken)
+    public async Task<TodoListUserModel> RefreshToken(string accessToken)
     {
         var claims = this.generator.GetClaimsFromToken(accessToken);
 
@@ -73,12 +73,11 @@ public class TodoListUserDatabaseService : ITodoListUserDatabaseService
         var refreshClaims = this.generator.GetClaimsFromToken(user.RefreshToken);
         var expirationDate = refreshClaims.FindFirst(JwtRegisteredClaimNames.Exp)?.Value;
 
-        if (long.TryParse(expirationDate, out var secs))
+        if (long.TryParse(expirationDate, out var secs) && DateTimeOffset.FromUnixTimeSeconds(secs).UtcDateTime > DateTime.UtcNow)
         {
-            if (DateTimeOffset.FromUnixTimeSeconds(secs).UtcDateTime > DateTime.UtcNow)
-            {
-                return this.generator.GenerateToken(userLogin, 5);
-            }
+            var newToken = new TodoListUserModel();
+            newToken.AccessToken = this.generator.GenerateToken(userLogin, 5);
+            return newToken;
         }
 
         throw new SessionExpiredException("Session expired");

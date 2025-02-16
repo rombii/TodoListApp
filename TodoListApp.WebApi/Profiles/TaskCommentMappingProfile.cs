@@ -12,7 +12,7 @@ public class TaskCommentMappingProfile : Profile
         this.CreateMap<TaskCommentPostModel, TaskCommentEntity>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(
                 src => Guid.NewGuid()))
-            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(
+            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(
                 src => DateTime.UtcNow));
     }
 }

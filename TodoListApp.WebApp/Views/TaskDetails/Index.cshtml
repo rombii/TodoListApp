@@ -1,0 +1,181 @@
+﻿@using System.Text.Json
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model TodoTaskDetailsModel
+
+@{
+    ViewData["Title"] = "Task Details";
+}
+
+<style>
+    .task-details-box {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        background-color: #f9f9f9;
+    }
+    .task-details-box h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+    }
+    .task-details-box .tags p, .task-details-box .comments .comment p {
+        margin-bottom: 6px;
+    }
+    .task-details-box .comment {
+        padding: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        margin-bottom: 12px;
+        background-color: #fff;
+    }
+    .task-details-box textarea {
+        width: 100%;
+        height: 80px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        padding: 6px;
+        border: 1px solid #ccc;
+    }
+    .tag-picker-overlay, .comment-edit-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .tag-picker, .comment-edit-modal {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    .tag-picker button, .comment-edit-modal button {
+        margin: 5px;
+    }
+</style>
+
+<div class="task-details-box">
+    <h2>Task Details</h2>
+    <p><strong>Title:</strong> @Model.Title</p>
+    <p><strong>Due Date:</strong> @Model.DueDate.ToShortDateString()</p>
+    <p><strong>Status:</strong> @(Model.IsCompleted ? "Completed" : "Pending")</p>
+
+    <h4>Tags</h4>
+    <div class="tags">
+        @foreach (var tag in Model.Tags)
+        {
+            <span class="badge bg-primary me-1">
+                @tag.Tag
+                <form asp-action="RemoveTag" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="taskId" value="@Model.Id" />
+                    <input type="hidden" name="tagId" value="@tag.Id" />
+                    <button type="submit" class="btn btn-link text-danger">Remove</button>
+                </form>
+            </span>
+        }
+    </div>
+    <form asp-action="ShowTagPicker" method="get">
+        <input type="hidden" name="listId" value="@Model.ListId" />
+        <input type="hidden" name="taskId" value="@Model.Id" />
+        <button type="submit" class="btn btn-primary mt-2">Add New Tag</button>
+    </form>
+
+    @if (TempData["Tags"] != null)
+    {
+        var availableTags = JsonSerializer.Deserialize<TaskTagModel[]>(TempData["Tags"].ToString());
+
+        <div id="tag-picker-overlay" class="tag-picker-overlay">
+            <div class="tag-picker">
+                <form asp-action="AssignTag" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="taskId" value="@Model.Id" />
+                    <div>
+                        @foreach (var tag in availableTags)
+                        {
+                            <button type="submit" name="tagId" value="@tag.Id" class="btn btn-outline-primary">@tag.Tag</button>
+                        }
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+
+    <h4>Comments</h4>
+    <div class="comments">
+        @foreach (var comment in Model.Comments)
+        {
+            <div class="comment">
+                <strong>@comment.CreatedDate.ToShortDateString()</strong>
+                <p>@comment.Comment</p>
+                <div>
+                    <button type="button" class="btn btn-link" onclick="showEditCommentModal('@comment.Id', '@comment.Comment')">Edit</button>
+                    <form asp-action="DeleteComment" method="post" style="display: inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="commentId" value="@comment.Id" />
+                        <input type="hidden" name="taskId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-link text-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div id="comment-edit-overlay" class="comment-edit-overlay" style="display: none;">
+        <div class="comment-edit-modal">
+            <h4>Edit Comment</h4>
+            <form id="editCommentForm" asp-action="EditComment" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="commentId" />
+                <textarea name="Comment" placeholder="Edit your comment" required></textarea>
+                <button type="submit" class="btn btn-warning">Update</button>
+                <button type="button" class="btn btn-secondary" onclick="hideEditCommentModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <h4>Add Comment</h4>
+    <form asp-action="AddComment" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="TaskId" value="@Model.Id" />
+        <textarea name="Comment" placeholder="Enter your comment" required></textarea>
+        <button type="submit" class="btn btn-success">Add Comment</button>
+    </form>
+</div>
+
+<a asp-controller="TodoList" asp-action="Index" asp-route-todoListId="@Model.ListId">Back to List</a>
+
+<script>
+    function showEditCommentModal(commentId, commentText) {
+        document.querySelector('#editCommentForm [name="commentId"]').value = commentId;
+        document.querySelector('#editCommentForm [name="Comment"]').value = commentText;
+        document.getElementById('comment-edit-overlay').style.display = 'flex';
+    }
+
+    function hideEditCommentModal() {
+        document.getElementById('comment-edit-overlay').style.display = 'none';
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var overlay = document.getElementById('comment-edit-overlay');
+        var modal = document.querySelector('.comment-edit-modal');
+
+        overlay.addEventListener('click', function (event) {
+            if (!modal.contains(event.target)) {
+                hideEditCommentModal();
+            }
+        });
+    });
+</script>

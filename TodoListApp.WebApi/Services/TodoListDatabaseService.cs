@@ -22,11 +22,11 @@ public class TodoListDatabaseService : ITodoListDatabaseService
         this.mapper = mapper;
     }
 
-    public async Task<List<TodoListModel>> GetTodoListsCreatedForUserAsync(string? issuer)
+    public async Task<List<TodoListModel>> GetTodoListsForUserAsync(string? issuer)
     {
         if (issuer == null)
         {
-            throw new UnauthorizedAccessException("Unauthorized");
+            throw new UnauthorizedAccessException();
         }
 
         var entities = await this.listDbContext.TodoList
@@ -76,7 +76,7 @@ public class TodoListDatabaseService : ITodoListDatabaseService
 
         if (issuer == null)
         {
-            throw new UnauthorizedAccessException("Unauthorized");
+            throw new UnauthorizedAccessException();
         }
 
         var role = await this.listDbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
@@ -84,7 +84,7 @@ public class TodoListDatabaseService : ITodoListDatabaseService
 
         if (role == null || role.Role.Role != "Owner")
         {
-            throw new UnauthorizedAccessException("Unauthorized");
+            throw new UnauthorizedAccessException();
         }
 
         entity.Title = todoList.Title;
@@ -106,7 +106,7 @@ public class TodoListDatabaseService : ITodoListDatabaseService
 
         if (issuer == null)
         {
-            throw new UnauthorizedAccessException("Unauthorized");
+            throw new UnauthorizedAccessException();
         }
 
         var role = await this.listDbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
@@ -114,7 +114,7 @@ public class TodoListDatabaseService : ITodoListDatabaseService
 
         if (role == null || role.Role.Role != "Owner")
         {
-            throw new UnauthorizedAccessException("Unauthorized");
+            throw new UnauthorizedAccessException();
         }
 
         this.listDbContext.TodoList.Remove(entity);
@@ -125,14 +125,14 @@ public class TodoListDatabaseService : ITodoListDatabaseService
     {
         if (issuer == null)
         {
-            throw new UnauthorizedAccessException("Unauthorized");
+            throw new UnauthorizedAccessException();
         }
 
         var user = this.userDbContext.Users.FirstOrDefaultAsync(user => user.Login == issuer);
 
         if (user == null)
         {
-            throw new UnauthorizedAccessException("Unauthorized");
+            throw new UnauthorizedAccessException();
         }
     }
 }

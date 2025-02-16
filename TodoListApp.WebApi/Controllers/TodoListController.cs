@@ -20,10 +20,10 @@ public class TodoListController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetTodoListsCreatedByUserAsync()
+    public async Task<IActionResult> GetTodoListsUserAsync()
     {
         var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var todoLists = await this.dbService.GetTodoListsCreatedForUserAsync(userLogin);
+        var todoLists = await this.dbService.GetTodoListsForUserAsync(userLogin);
         return this.Ok(todoLists);
     }
 

@@ -9,7 +9,7 @@ public interface ITodoListUserDatabaseService
 
     Task Register(TodoListUserPostModel model);
 
-    Task<string> RefreshToken(string accessToken);
+    Task<TodoListUserModel> RefreshToken(string accessToken);
 
     Task Logout(string? issuer);
 }

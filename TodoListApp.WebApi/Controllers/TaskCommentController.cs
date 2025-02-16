@@ -1,4 +1,5 @@
 ﻿namespace TodoListApp.WebApi.Controllers;
+using TodoListApp.WebApi.Models.Put;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using TodoListApp.WebApi.Services.Interfaces;
@@ -18,14 +19,6 @@ public class TaskCommentController : ControllerBase
         this.service = service;
     }
 
-    [HttpGet("{taskId:guid}")]
-    public async Task<IActionResult> GetAllCommentsForTask(Guid taskId)
-    {
-        var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var comments = await this.service.GetCommentsForTaskAsync(taskId, userLogin);
-        return this.Ok(comments);
-    }
-
     [HttpPost]
     public async Task<IActionResult> AddCommentToTask([FromBody] TaskCommentPostModel model)
     {
@@ -39,6 +32,14 @@ public class TaskCommentController : ControllerBase
     {
         var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         await this.service.RemoveComment(commentId, userLogin);
+        return this.NoContent();
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateComment([FromBody] TaskCommentPutModel model)
+    {
+        var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        await this.service.UpdateComment(model, userLogin);
         return this.NoContent();
     }
 }

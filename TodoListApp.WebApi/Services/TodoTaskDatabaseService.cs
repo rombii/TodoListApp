@@ -1,11 +1,11 @@
-﻿using AutoMapper;
+﻿namespace TodoListApp.WebApi.Services;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.WebApi.Data;
 using TodoListApp.WebApi.Entities;
 using TodoListApp.WebApi.Models;
 using TodoListApp.WebApi.Models.Post;
 using TodoListApp.WebApi.Models.Put;
-using TodoListApp.WebApi.Profiles;
 using TodoListApp.WebApi.Services.Interfaces;
 
 public class TodoTaskDatabaseService : ITodoTaskDatabaseService
@@ -23,7 +23,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
     {
         if (!await this.dbContext.ListRole.AnyAsync(role => role.ListId == listId && role.User == issuer))
         {
-            throw new UnauthorizedAccessException("Unauthorized");
+            throw new UnauthorizedAccessException();
         }
 
         if (!await this.dbContext.TodoList.AnyAsync(list => list.Id == listId))
@@ -39,14 +39,29 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
         return this.mapper.Map<List<TodoTaskModel>>(entities);
     }
 
+    public async Task<List<TodoTaskModel>> GetTasksForUserAsync(string? issuer)
+    {
+        if (issuer == null)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        var entities = await this.dbContext.TodoTask
+            .Where(task => task.List.ListRoles.Any(listRole => listRole.User == issuer))
+            .Include(task => task.Tags)
+            .ToListAsync();
+
+        return this.mapper.Map<List<TodoTaskModel>>(entities);
+    }
+
     public async Task<TodoTaskWithCommentsModel> GetTask(Guid id, string? issuer)
     {
-        var task = await this.dbContext.TodoTask.Include(task => task.Comments).FirstOrDefaultAsync(task => task.Id == id &&
-                                                                             this.dbContext.ListRole.Any(role => role.ListId == task.ListId && role.User == issuer));
+        var task = await this.dbContext.TodoTask.Include(task => task.Tags).Include(task => task.Comments).FirstOrDefaultAsync(task => task.Id == id &&
+            this.dbContext.ListRole.Any(role => role.ListId == task.ListId && role.User == issuer));
 
         if (task == null)
         {
-            throw new KeyNotFoundException("Unauthorized");
+            throw new KeyNotFoundException();
         }
 
         return this.mapper.Map<TodoTaskWithCommentsModel>(task);
@@ -66,7 +81,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
 
         if (role == null || role.Role.Role != "Owner")
         {
-            throw new UnauthorizedAccessException("Unauthorized");
+            throw new UnauthorizedAccessException();
         }
 
         var entity = this.mapper.Map<TodoTaskEntity>(model);
@@ -93,7 +108,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
 
         if (role == null || role.Role.Role != "Owner")
         {
-            throw new UnauthorizedAccessException("Unauthorized");
+            throw new UnauthorizedAccessException();
         }
 
         this.dbContext.TodoTask.Remove(task);
@@ -116,7 +131,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
 
         if (role == null || role.Role.Role != "Owner")
         {
-            throw new UnauthorizedAccessException("Unauthorized");
+            throw new UnauthorizedAccessException();
         }
 
         entity.Title = model.Title;
@@ -126,9 +141,43 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
         await this.dbContext.SaveChangesAsync();
     }
 
+    public async Task UpdateTaskStatusAsync(Guid taskId, string? issuer)
+    {
+        var entity = await this.dbContext.TodoTask
+            .Include(todoTaskEntity => todoTaskEntity.List)
+            .FirstOrDefaultAsync(task => task.Id == taskId);
+
+        if (entity == null)
+        {
+            return;
+        }
+
+        var role = await this.dbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
+            role.ListId == entity.ListId && role.User == issuer);
+
+        if (role == null || role.Role.Role != "Owner")
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        entity.IsCompleted = !entity.IsCompleted;
+
+        await this.dbContext.SaveChangesAsync();
+    }
+
     public async Task<List<TodoTaskModel>> GetOverdueTasksForUserAsync(string? issuer)
     {
-        return null;
+        if (issuer == null)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        var entities = await this.dbContext.TodoTask
+            .Where(task => task.List.ListRoles.Any(listRole => listRole.User == issuer) && task.DueDate < DateTime.UtcNow)
+            .Include(task => task.Tags)
+            .ToListAsync();
+
+        return this.mapper.Map<List<TodoTaskModel>>(entities);
     }
 
 }

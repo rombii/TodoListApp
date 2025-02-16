@@ -121,6 +121,32 @@ public class TaskTagDatabaseService : ITaskTagDatabaseService
         await this.dbContext.SaveChangesAsync();
     }
 
+    public async Task RemoveTag(Guid tagId, Guid taskId, string? issuer)
+    {
+        var task = await this.dbContext.TodoTask.Include(task => task.Tags)
+            .Include(todoTaskEntity => todoTaskEntity.List).FirstOrDefaultAsync(task => task.Id == taskId);
+        var tag = await this.dbContext.TaskTag.FirstOrDefaultAsync(tag => tag.Id == tagId);
+        if (task == null || tag == null)
+        {
+            throw new KeyNotFoundException("Not found");
+        }
+
+        var role = await this.dbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(
+            role => role.ListId == task.ListId && role.User == issuer);
+
+        if (issuer == null || role == null || role.Role.Role == "Viewer" || tag.ListId != task.ListId)
+        {
+            throw new UnauthorizedAccessException("Unauthorized");
+        }
+
+        if (task.Tags.Contains(tag))
+        {
+            task.Tags.Remove(tag);
+        }
+
+        await this.dbContext.SaveChangesAsync();
+    }
+
     public async Task DeleteTag(Guid tagId, string? issuer)
     {
         var tag = await this.dbContext.TaskTag.FirstOrDefaultAsync(tag => tag.Id == tagId);

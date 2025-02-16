@@ -27,6 +27,14 @@ public class TaskController : ControllerBase
         return this.Ok(tasks);
     }
 
+    [HttpGet("user")]
+    public async Task<IActionResult> GetTasksForUserAsync()
+    {
+        var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var tasks = await this.taskService.GetTasksForUserAsync(userLogin);
+        return this.Ok(tasks);
+    }
+
     [HttpGet("{taskId:guid}")]
     public async Task<IActionResult> GetTask(Guid taskId)
     {
@@ -58,6 +66,16 @@ public class TaskController : ControllerBase
         await this.taskService.UpdateTodoTaskAsync(updatedTask, userLogin);
         return this.NoContent();
     }
+
+    [HttpPut("change_status/{taskId:guid}")]
+    public async Task<IActionResult> ChangeTagStatus(Guid taskId)
+    {
+        var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        await this.taskService.UpdateTaskStatusAsync(taskId, userLogin);
+
+        return this.NoContent();
+    }
+
 
     [HttpGet("overdue")]
     public async Task<IActionResult> GetOverdueTasksAsync()

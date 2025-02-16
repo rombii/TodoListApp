@@ -49,7 +49,4 @@ public class UserController : ControllerBase
         await this.service.Logout(userLogin);
         return this.Ok();
     }
-
-    // TODO
-    // reset password
 }

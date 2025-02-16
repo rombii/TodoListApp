@@ -15,5 +15,7 @@ public interface ITaskTagDatabaseService
 
     Task AssignTag(Guid tagId, Guid taskId, string? issuer);
 
+    Task RemoveTag(Guid tagId, Guid taskId, string? issuer);
+
     Task DeleteTag(Guid tagId, string? issuer);
 }

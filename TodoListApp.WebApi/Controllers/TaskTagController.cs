@@ -33,7 +33,7 @@ public class TaskTagController : ControllerBase
     }
 
 
-    [HttpGet("/list/{listId:guid}")]
+    [HttpGet("list/{listId:guid}")]
     public async Task<IActionResult> GetTagsForListAsync(Guid listId)
     {
         var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -49,8 +49,8 @@ public class TaskTagController : ControllerBase
         return this.NoContent();
     }
 
-    [HttpPost("/assign/")]
-    public async Task<IActionResult> AssignTask([FromQuery] Guid tagId, [FromQuery] Guid taskId)
+    [HttpPost("assign/")]
+    public async Task<IActionResult> AssignTag([FromQuery] Guid tagId, [FromQuery] Guid taskId)
     {
         var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         await this.tagService.AssignTag(tagId, taskId, userLogin);
@@ -58,8 +58,17 @@ public class TaskTagController : ControllerBase
         return this.NoContent();
     }
 
+    [HttpDelete("remove/")]
+    public async Task<IActionResult> RemoveTag([FromQuery] Guid tagId, [FromQuery] Guid taskId)
+    {
+        var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        await this.tagService.RemoveTag(tagId, taskId, userLogin);
+
+        return this.NoContent();
+    }
+
     [HttpDelete("{tagId:guid}")]
-    public async Task<IActionResult> DeleteTaskAsync(Guid tagId)
+    public async Task<IActionResult> DeleteTagAsync(Guid tagId)
     {
         var userLogin = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         await this.tagService.DeleteTag(tagId, userLogin);

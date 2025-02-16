@@ -6,5 +6,5 @@ public class TaskCommentModel
 
     public string Comment { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedDate { get; set; }
 }

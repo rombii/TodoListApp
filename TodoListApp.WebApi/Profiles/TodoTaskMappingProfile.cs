@@ -21,6 +21,7 @@ public class TodoTaskMappingProfile : Profile
                 {
                     Id = comment.Id,
                     Comment = comment.Comment,
+                    CreatedDate = comment.CreatedDate,
                 })));
 
         this.CreateMap<TodoTaskPostModel, TodoTaskEntity>()

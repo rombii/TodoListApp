@@ -10,7 +10,7 @@ public class TaskCommentEntity
 
     public string Comment { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedDate { get; set; }
 
     [ForeignKey("Task")]
     public Guid TaskId { get; set; }

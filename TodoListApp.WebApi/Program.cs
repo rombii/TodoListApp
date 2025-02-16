@@ -111,6 +111,15 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContextList = scope.ServiceProvider.GetRequiredService<TodoListDbContext>();
+    await dbContextList.Database.MigrateAsync();
+
+    var dbContextUser = scope.ServiceProvider.GetRequiredService<TodoListUserDbContext>();
+    await dbContextUser.Database.MigrateAsync();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
