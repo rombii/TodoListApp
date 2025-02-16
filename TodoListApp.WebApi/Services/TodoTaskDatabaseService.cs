@@ -111,7 +111,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
             throw new UnauthorizedAccessException();
         }
 
-        this.dbContext.TodoTask.Remove(task);
+        this.dbContext.TodoTask!.Remove(task);
         await this.dbContext.SaveChangesAsync();
     }
 

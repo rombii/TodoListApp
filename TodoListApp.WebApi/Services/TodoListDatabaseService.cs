@@ -53,7 +53,7 @@ public class TodoListDatabaseService : ITodoListDatabaseService
             Id = Guid.NewGuid(),
             User = issuer!,
             ListId = listGuid,
-            RoleId = (await this.listDbContext.Role.FirstAsync(role => role.Role == "Owner")).Id,
+            RoleId = (await this.listDbContext.Role!.FirstAsync(role => role.Role == "Owner")).Id,
         };
 
         await this.listDbContext.TodoList!.AddAsync(entity);
