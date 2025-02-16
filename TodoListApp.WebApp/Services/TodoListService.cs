@@ -15,7 +15,6 @@ public class TodoListService : ITodoListService
         this.helper = helper;
     }
 
-
     public async Task<TodoListModel[]> GetTodoListsAsync()
     {
         var response = await this.helper.CallApiWithTokenAsync(async client => await client.GetAsync("api/todolist"));

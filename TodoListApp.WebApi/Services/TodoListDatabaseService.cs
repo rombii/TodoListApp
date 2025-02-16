@@ -115,7 +115,7 @@ public class TodoListDatabaseService : ITodoListDatabaseService
             throw new UnauthorizedAccessException();
         }
 
-        this.listDbContext.TodoList.Remove(entity);
+        this.listDbContext.TodoList!.Remove(entity);
         await this.listDbContext.SaveChangesAsync();
     }
 
