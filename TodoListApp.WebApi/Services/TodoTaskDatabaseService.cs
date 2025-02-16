@@ -21,17 +21,17 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
 
     public async Task<List<TodoTaskModel>> GetTasksForTodoListAsync(Guid listId, string? issuer)
     {
-        if (!await this.dbContext.ListRole.AnyAsync(role => role.ListId == listId && role.User == issuer))
+        if (!await this.dbContext.ListRole!.AnyAsync(role => role.ListId == listId && role.User == issuer))
         {
             throw new UnauthorizedAccessException();
         }
 
-        if (!await this.dbContext.TodoList.AnyAsync(list => list.Id == listId))
+        if (!await this.dbContext.TodoList!.AnyAsync(list => list.Id == listId))
         {
             throw new KeyNotFoundException("Not found");
         }
 
-        var entities = await this.dbContext.TodoTask
+        var entities = await this.dbContext.TodoTask!
             .Where(task => task.ListId == listId)
             .Include(task => task.Tags)
             .ToListAsync();
@@ -46,7 +46,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
             throw new UnauthorizedAccessException();
         }
 
-        var entities = await this.dbContext.TodoTask
+        var entities = await this.dbContext.TodoTask!
             .Where(task => task.List.ListRoles.Any(listRole => listRole.User == issuer))
             .Include(task => task.Tags)
             .ToListAsync();
@@ -56,8 +56,8 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
 
     public async Task<TodoTaskWithCommentsModel> GetTask(Guid id, string? issuer)
     {
-        var task = await this.dbContext.TodoTask.Include(task => task.Tags).Include(task => task.Comments).FirstOrDefaultAsync(task => task.Id == id &&
-            this.dbContext.ListRole.Any(role => role.ListId == task.ListId && role.User == issuer));
+        var task = await this.dbContext.TodoTask!.Include(task => task.Tags).Include(task => task.Comments).FirstOrDefaultAsync(task => task.Id == id &&
+            this.dbContext.ListRole!.Any(role => role.ListId == task.ListId && role.User == issuer));
 
         if (task == null)
         {
@@ -69,14 +69,14 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
 
     public async Task CreateTodoTaskAsync(TodoTaskPostModel model, string? issuer)
     {
-        var list = await this.dbContext.TodoList.FirstOrDefaultAsync(list => list.Id == model.ListId);
+        var list = await this.dbContext.TodoList!.FirstOrDefaultAsync(list => list.Id == model.ListId);
 
         if (list == null)
         {
             throw new KeyNotFoundException("Not found");
         }
 
-        var role = await this.dbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
+        var role = await this.dbContext.ListRole!.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
             role.ListId == list.Id && role.User == issuer);
 
         if (role == null || role.Role.Role != "Owner")
@@ -94,7 +94,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
 
     public async Task DeleteTodoTaskAsync(Guid id, string? issuer)
     {
-        var task = await this.dbContext.TodoTask
+        var task = await this.dbContext.TodoTask!
             .Include(todoTaskEntity => todoTaskEntity.List)
             .FirstOrDefaultAsync(task => task.Id == id);
 
@@ -103,7 +103,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
             return;
         }
 
-        var role = await this.dbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
+        var role = await this.dbContext.ListRole!.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
             role.ListId == task.ListId && role.User == issuer);
 
         if (role == null || role.Role.Role != "Owner")
@@ -117,7 +117,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
 
     public async Task UpdateTodoTaskAsync(TodoTaskPutModel model, string? issuer)
     {
-        var entity = await this.dbContext.TodoTask
+        var entity = await this.dbContext.TodoTask!
             .Include(todoTaskEntity => todoTaskEntity.List)
             .FirstOrDefaultAsync(task => task.Id == model.Id);
 
@@ -126,7 +126,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
             return;
         }
 
-        var role = await this.dbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
+        var role = await this.dbContext.ListRole!.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
             role.ListId == entity.ListId && role.User == issuer);
 
         if (role == null || role.Role.Role != "Owner")
@@ -143,7 +143,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
 
     public async Task UpdateTaskStatusAsync(Guid taskId, string? issuer)
     {
-        var entity = await this.dbContext.TodoTask
+        var entity = await this.dbContext.TodoTask!
             .Include(todoTaskEntity => todoTaskEntity.List)
             .FirstOrDefaultAsync(task => task.Id == taskId);
 
@@ -152,7 +152,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
             return;
         }
 
-        var role = await this.dbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
+        var role = await this.dbContext.ListRole!.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
             role.ListId == entity.ListId && role.User == issuer);
 
         if (role == null || role.Role.Role != "Owner")
@@ -172,7 +172,7 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
             throw new UnauthorizedAccessException();
         }
 
-        var entities = await this.dbContext.TodoTask
+        var entities = await this.dbContext.TodoTask!
             .Where(task => task.List.ListRoles.Any(listRole => listRole.User == issuer) && task.DueDate < DateTime.UtcNow)
             .Include(task => task.Tags)
             .ToListAsync();

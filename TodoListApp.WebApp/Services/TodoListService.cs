@@ -21,7 +21,7 @@ public class TodoListService : ITodoListService
         var response = await this.helper.CallApiWithTokenAsync(async client => await client.GetAsync("api/todolist"));
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<TodoListModel[]>(result);
+        return JsonSerializer.Deserialize<TodoListModel[]>(result) !;
     }
 
     public async Task CreateTodoListAsync(TodoListPostModel todoList)

@@ -1,7 +1,6 @@
 ﻿namespace TodoListApp.WebApp.Models.Put;
 using System.Text.Json.Serialization;
 
-
 public class TodoTaskPutModel
 {
     [JsonPropertyName("id")]

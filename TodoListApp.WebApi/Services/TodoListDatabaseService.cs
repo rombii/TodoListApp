@@ -28,8 +28,8 @@ public class TodoListDatabaseService : ITodoListDatabaseService
             throw new UnauthorizedAccessException();
         }
 
-        var entities = await this.listDbContext.TodoList
-            .Where(todoList => this.listDbContext.ListRole
+        var entities = await this.listDbContext.TodoList!
+            .Where(todoList => this.listDbContext.ListRole!
                 .Any(role => role.ListId == todoList.Id && role.User == issuer))
             .ToListAsync();
 
@@ -56,14 +56,14 @@ public class TodoListDatabaseService : ITodoListDatabaseService
             RoleId = (await this.listDbContext.Role.FirstAsync(role => role.Role == "Owner")).Id,
         };
 
-        await this.listDbContext.TodoList.AddAsync(entity);
-        await this.listDbContext.ListRole.AddAsync(role);
+        await this.listDbContext.TodoList!.AddAsync(entity);
+        await this.listDbContext.ListRole!.AddAsync(role);
         await this.listDbContext.SaveChangesAsync();
     }
 
     public async Task UpdateTodoListAsync(TodoListPutModel todoList, string? issuer)
     {
-        var entity = await this.listDbContext.TodoList
+        var entity = await this.listDbContext.TodoList!
             .Where(todoListEntity => todoListEntity.Id == todoList.Id)
             .FirstOrDefaultAsync();
 
@@ -77,7 +77,7 @@ public class TodoListDatabaseService : ITodoListDatabaseService
             throw new UnauthorizedAccessException();
         }
 
-        var role = await this.listDbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
+        var role = await this.listDbContext.ListRole!.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
             role.ListId == entity.Id && role.User == issuer);
 
         if (role == null || role.Role.Role != "Owner")
@@ -93,7 +93,7 @@ public class TodoListDatabaseService : ITodoListDatabaseService
 
     public async Task DeleteTodoListAsync(Guid listId, string? issuer)
     {
-        var entity = await this.listDbContext.TodoList
+        var entity = await this.listDbContext.TodoList!
             .Where(todoListEntity => todoListEntity.Id == listId)
             .FirstOrDefaultAsync();
 
@@ -107,7 +107,7 @@ public class TodoListDatabaseService : ITodoListDatabaseService
             throw new UnauthorizedAccessException();
         }
 
-        var role = await this.listDbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
+        var role = await this.listDbContext.ListRole!.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
             role.ListId == entity.Id && role.User == issuer);
 
         if (role == null || role.Role.Role != "Owner")
@@ -126,7 +126,7 @@ public class TodoListDatabaseService : ITodoListDatabaseService
             throw new UnauthorizedAccessException();
         }
 
-        var user = this.userDbContext.Users.FirstOrDefaultAsync(user => user.Login == issuer);
+        var user = this.userDbContext.Users!.FirstOrDefaultAsync(user => user.Login == issuer);
 
         if (user == null)
         {

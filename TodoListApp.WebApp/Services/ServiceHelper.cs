@@ -29,7 +29,7 @@ public class ServiceHelper : IServiceHelper
         {
             var result = await response.Content.ReadAsStringAsync();
             var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(result);
-            this.httpContextAccessor.HttpContext?.Session.SetString("AccessToken", tokenResponse.AccessToken);
+            this.httpContextAccessor.HttpContext?.Session.SetString("AccessToken", tokenResponse!.AccessToken);
         }
     }
 

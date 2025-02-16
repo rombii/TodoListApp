@@ -25,7 +25,7 @@ public class TaskTagDatabaseService : ITaskTagDatabaseService
             throw new UnauthorizedAccessException("Unauthorized");
         }
 
-        var list = await this.dbContext.TodoList.Include(todoListEntity => todoListEntity.Tags)
+        var list = await this.dbContext.TodoList!.Include(todoListEntity => todoListEntity.Tags)
             .FirstOrDefaultAsync(list => list.Id == listId);
 
         if (list == null)
@@ -33,7 +33,7 @@ public class TaskTagDatabaseService : ITaskTagDatabaseService
             throw new KeyNotFoundException("Not found");
         }
 
-        var role = await this.dbContext.ListRole.FirstOrDefaultAsync(role =>
+        var role = await this.dbContext.ListRole!.FirstOrDefaultAsync(role =>
             role.ListId == listId && role.User == issuer);
 
         if (role == null)
@@ -48,26 +48,26 @@ public class TaskTagDatabaseService : ITaskTagDatabaseService
 
     public async Task<List<TodoTaskModel>> GetAllTasksForTag(Guid tagId)
     {
-        var tag = await this.dbContext.TaskTag.FirstOrDefaultAsync(tag => tag.Id == tagId);
+        var tag = await this.dbContext.TaskTag!.FirstOrDefaultAsync(tag => tag.Id == tagId);
         if (tag == null)
         {
             throw new KeyNotFoundException("Not found");
         }
 
-        var tasks = await this.dbContext.TodoTask.Where(task => task.Tags.Contains(tag)).ToListAsync();
+        var tasks = await this.dbContext.TodoTask!.Where(task => task.Tags.Contains(tag)).ToListAsync();
 
         return this.mapper.Map<List<TodoTaskModel>>(tasks);
     }
 
     public async Task<List<TaskTagModel>> GetAllTagsForTask(Guid taskId)
     {
-        var task = await this.dbContext.TodoTask.FirstOrDefaultAsync(task => task.Id == taskId);
+        var task = await this.dbContext.TodoTask!.FirstOrDefaultAsync(task => task.Id == taskId);
         if (task == null)
         {
             throw new KeyNotFoundException("Not found");
         }
 
-        var tags = await this.dbContext.TaskTag.Where(tag => tag.Tasks.Contains(task)).ToListAsync();
+        var tags = await this.dbContext.TaskTag!.Where(tag => tag.Tasks.Contains(task)).ToListAsync();
 
         return this.mapper.Map<List<TaskTagModel>>(tags);
     }
@@ -81,7 +81,7 @@ public class TaskTagDatabaseService : ITaskTagDatabaseService
 
         var tag = this.mapper.Map<TaskTagEntity>(model);
 
-        var role = await this.dbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
+        var role = await this.dbContext.ListRole!.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(role =>
             role.ListId == model.ListId && role.User == issuer);
 
         if (role == null || role.Role.Role == "Viewer")
@@ -89,21 +89,21 @@ public class TaskTagDatabaseService : ITaskTagDatabaseService
             throw new UnauthorizedAccessException("Unauthorized");
         }
 
-        await this.dbContext.TaskTag.AddAsync(tag);
+        await this.dbContext.TaskTag!.AddAsync(tag);
         await this.dbContext.SaveChangesAsync();
     }
 
     public async Task AssignTag(Guid tagId, Guid taskId, string? issuer)
     {
-        var task = await this.dbContext.TodoTask.Include(task => task.Tags)
+        var task = await this.dbContext.TodoTask!.Include(task => task.Tags)
             .Include(todoTaskEntity => todoTaskEntity.List).FirstOrDefaultAsync(task => task.Id == taskId);
-        var tag = await this.dbContext.TaskTag.FirstOrDefaultAsync(tag => tag.Id == tagId);
+        var tag = await this.dbContext.TaskTag!.FirstOrDefaultAsync(tag => tag.Id == tagId);
         if (task == null || tag == null)
         {
             throw new KeyNotFoundException("Not found");
         }
 
-        var role = await this.dbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(
+        var role = await this.dbContext.ListRole!.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(
             role => role.ListId == task.ListId && role.User == issuer);
 
         if (issuer == null || role == null || role.Role.Role == "Viewer" || tag.ListId != task.ListId)
@@ -121,15 +121,15 @@ public class TaskTagDatabaseService : ITaskTagDatabaseService
 
     public async Task RemoveTag(Guid tagId, Guid taskId, string? issuer)
     {
-        var task = await this.dbContext.TodoTask.Include(task => task.Tags)
+        var task = await this.dbContext.TodoTask!.Include(task => task.Tags)
             .Include(todoTaskEntity => todoTaskEntity.List).FirstOrDefaultAsync(task => task.Id == taskId);
-        var tag = await this.dbContext.TaskTag.FirstOrDefaultAsync(tag => tag.Id == tagId);
+        var tag = await this.dbContext.TaskTag!.FirstOrDefaultAsync(tag => tag.Id == tagId);
         if (task == null || tag == null)
         {
             throw new KeyNotFoundException("Not found");
         }
 
-        var role = await this.dbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(
+        var role = await this.dbContext.ListRole!.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(
             role => role.ListId == task.ListId && role.User == issuer);
 
         if (issuer == null || role == null || role.Role.Role == "Viewer" || tag.ListId != task.ListId)
@@ -147,14 +147,14 @@ public class TaskTagDatabaseService : ITaskTagDatabaseService
 
     public async Task DeleteTag(Guid tagId, string? issuer)
     {
-        var tag = await this.dbContext.TaskTag.FirstOrDefaultAsync(tag => tag.Id == tagId);
+        var tag = await this.dbContext.TaskTag!.FirstOrDefaultAsync(tag => tag.Id == tagId);
 
         if (tag == null)
         {
             return; // If tag doesn't exist endpoint achieved final state (tag is gone)
         }
 
-        var role = await this.dbContext.ListRole.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(
+        var role = await this.dbContext.ListRole!.Include(todoListRoleEntity => todoListRoleEntity.Role).FirstOrDefaultAsync(
             role => role.ListId == tag.ListId && role.User == issuer);
 
         if (issuer == null || role == null || role.Role.Role == "Viewer")
@@ -162,7 +162,7 @@ public class TaskTagDatabaseService : ITaskTagDatabaseService
             throw new UnauthorizedAccessException("Unauthorized");
         }
 
-        this.dbContext.TaskTag.Remove(tag);
+        this.dbContext.TaskTag!.Remove(tag);
         await this.dbContext.SaveChangesAsync();
     }
 }

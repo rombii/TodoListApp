@@ -1,7 +1,6 @@
 ﻿namespace TodoListApp.WebApp.Models;
 using System.Text.Json.Serialization;
 
-
 public class TaskTagModel
 {
     [JsonPropertyName("id")]

@@ -27,7 +27,7 @@ public class TodoListUserDatabaseService : ITodoListUserDatabaseService
 
     public async Task<TodoListUserModel> Login(TodoListUserLoginModel model)
     {
-        var user = await this.dbContext.Users.FirstOrDefaultAsync(user => user.Login == model.Login);
+        var user = await this.dbContext.Users!.FirstOrDefaultAsync(user => user.Login == model.Login);
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
         {
@@ -63,7 +63,7 @@ public class TodoListUserDatabaseService : ITodoListUserDatabaseService
             throw new UnauthorizedAccessException();
         }
 
-        var user = await this.dbContext.Users.FirstOrDefaultAsync(user => user.Login == userLogin);
+        var user = await this.dbContext.Users!.FirstOrDefaultAsync(user => user.Login == userLogin);
 
         if (user == null)
         {
@@ -90,7 +90,7 @@ public class TodoListUserDatabaseService : ITodoListUserDatabaseService
             throw new UnauthorizedAccessException();
         }
 
-        var user = await this.dbContext.Users.FirstOrDefaultAsync(user => user.Login == issuer);
+        var user = await this.dbContext.Users!.FirstOrDefaultAsync(user => user.Login == issuer);
         if (user == null)
         {
             return;

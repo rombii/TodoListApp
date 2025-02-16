@@ -2,7 +2,6 @@
 using TodoListApp.WebApp.Models;
 using TodoListApp.WebApp.Models.Post;
 
-
 public interface ITagService
 {
     Task<TaskTagModel[]> GetTagsForListAsync(Guid listId);

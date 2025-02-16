@@ -95,7 +95,7 @@
 
     @if (TempData["Tags"] != null)
     {
-        var availableTags = JsonSerializer.Deserialize<TaskTagModel[]>(TempData["Tags"]!.ToString());
+        var availableTags = JsonSerializer.Deserialize<TaskTagModel[]>(TempData["Tags"] !.ToString());
 
         <div id="tag-picker-overlay" class="tag-picker-overlay">
             <div class="tag-picker">
