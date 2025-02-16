@@ -9,17 +9,17 @@ public class TodoListDbContext : DbContext
     {
     }
 
-    public DbSet<TodoListEntity> TodoList { get; set; }
+    public DbSet<TodoListEntity>? TodoList { get; set; }
 
-    public DbSet<TodoTaskEntity> TodoTask { get; set; }
+    public DbSet<TodoTaskEntity>? TodoTask { get; set; }
 
-    public DbSet<TaskCommentEntity> TaskComment { get; set; }
+    public DbSet<TaskCommentEntity>? TaskComment { get; set; }
 
-    public DbSet<TaskTagEntity> TaskTag { get; set; }
+    public DbSet<TaskTagEntity>? TaskTag { get; set; }
 
-    public DbSet<TodoListRoleEntity> ListRole { get; set; }
+    public DbSet<TodoListRoleEntity>? ListRole { get; set; }
 
-    public DbSet<RoleEntity> Role { get; set; }
+    public DbSet<RoleEntity>? Role { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

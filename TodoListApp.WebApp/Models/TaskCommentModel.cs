@@ -7,7 +7,7 @@ public class TaskCommentModel
     public Guid Id { get; set; }
 
     [JsonPropertyName("comment")]
-    public string Comment { get; set; }
+    public string Comment { get; set; } = null!;
 
     [JsonPropertyName("createdDate")]
     public DateTime CreatedDate { get; set; }

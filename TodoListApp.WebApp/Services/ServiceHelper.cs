@@ -15,21 +15,21 @@ public class ServiceHelper : IServiceHelper
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<string?> GetAccessTokenAsync()
+    public Task<string?> GetAccessTokenAsync()
     {
-        return this.httpContextAccessor.HttpContext.Session.GetString("AccessToken");
+        return Task.FromResult(this.httpContextAccessor.HttpContext?.Session.GetString("AccessToken"));
     }
 
     public async Task RefreshTokenAsync()
     {
-        var accessToken = this.httpContextAccessor.HttpContext.Session.GetString("AccessToken");
+        var accessToken = this.httpContextAccessor.HttpContext?.Session.GetString("AccessToken");
         var response = await this.httpClient.GetAsync($"api/user/token/{accessToken}");
 
         if (response.IsSuccessStatusCode)
         {
             var result = await response.Content.ReadAsStringAsync();
             var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(result);
-            this.httpContextAccessor.HttpContext.Session.SetString("AccessToken", tokenResponse.AccessToken);
+            this.httpContextAccessor.HttpContext?.Session.SetString("AccessToken", tokenResponse.AccessToken);
         }
     }
 

@@ -8,7 +8,7 @@ public class TodoTaskPutModel
     public Guid Id { get; set; }
 
     [JsonPropertyName("title")]
-    public string Title { get; set; }
+    public string Title { get; set; } = null!;
 
     [JsonPropertyName("isCompleted")]
     public bool IsCompleted { get; set; }

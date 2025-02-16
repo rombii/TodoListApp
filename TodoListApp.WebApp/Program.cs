@@ -1,4 +1,5 @@
 #pragma warning disable SA1200
+using TodoListApp.WebApp.Middleware;
 using TodoListApp.WebApp.Services;
 using TodoListApp.WebApp.Services.Interfaces;
 #pragma warning restore SA1200

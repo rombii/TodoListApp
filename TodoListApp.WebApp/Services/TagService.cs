@@ -21,7 +21,7 @@ public class TagService : ITagService
         if (response.IsSuccessStatusCode)
         {
             var result = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<TaskTagModel[]>(result);
+            return JsonSerializer.Deserialize<TaskTagModel[]>(result)!;
         }
 
         return Array.Empty<TaskTagModel>();

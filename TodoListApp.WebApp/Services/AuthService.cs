@@ -26,10 +26,13 @@ public class AuthService : IAuthService
         {
             var result = await response.Content.ReadAsStringAsync();
             var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(result);
-            return tokenResponse.AccessToken;
+            if (tokenResponse != null)
+            {
+                return tokenResponse.AccessToken;
+            }
         }
 
-        return null;
+        return null!;
     }
 
     public async Task<HttpResponseMessage> RegisterAsync(TodoListUserPostModel todoListUserPostModel)
@@ -45,7 +48,7 @@ public class AuthService : IAuthService
         var response = await this.httpClient.PostAsync("api/user/logout", null);
         if (response.IsSuccessStatusCode)
         {
-            this.contextAccessor.HttpContext.Session.Remove("AccessToken");
+            this.contextAccessor.HttpContext?.Session.Remove("AccessToken");
         }
     }
 }

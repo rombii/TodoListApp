@@ -1,29 +1,30 @@
-﻿using System.Net;
+﻿namespace TodoListApp.WebApp.Middleware;
+using System.Net;
 
 public class ExceptionHandlingMiddleware
 {
-    private readonly RequestDelegate _next;
+    private readonly RequestDelegate next;
 
     public ExceptionHandlingMiddleware(RequestDelegate next)
     {
-        _next = next;
+        this.next = next;
     }
 
     public async Task Invoke(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await this.next(context);
         }
 #pragma warning disable CA1031
-            catch (Exception ex)
+        catch (Exception ex)
 #pragma warning restore CA1031
-            {
-                await this.HandleExceptionAsync(context, ex);
-            }
+        {
+            await HandleExceptionAsync(context, ex);
+        }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         string redirectUrl;
 
@@ -45,6 +46,6 @@ public class ExceptionHandlingMiddleware
         }
 
         context.Response.Redirect(redirectUrl);
+        return Task.CompletedTask;
     }
-
 }

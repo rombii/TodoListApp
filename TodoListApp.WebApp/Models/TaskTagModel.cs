@@ -8,5 +8,5 @@ public class TaskTagModel
     public Guid Id { get; set; }
 
     [JsonPropertyName("tag")]
-    public string Tag { get; set; }
+    public string Tag { get; set; } = null!;
 }

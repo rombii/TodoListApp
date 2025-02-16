@@ -7,7 +7,6 @@ using TodoListApp.WebApp.Models;
 using TodoListApp.WebApp.Models.Post;
 using TodoListApp.WebApp.Services;
 
-
 public class AuthController : Controller
 {
     private readonly IAuthService authService;

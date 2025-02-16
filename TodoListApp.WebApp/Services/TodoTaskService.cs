@@ -20,7 +20,7 @@ public class TodoTaskService : ITodoTaskService
         var response = await this.helper.CallApiWithTokenAsync(async client => await client.GetAsync($"api/task/list/{todoListId}"));
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<TodoTaskModel[]>(result);
+        return JsonSerializer.Deserialize<TodoTaskModel[]>(result)!;
     }
 
     public async Task<TodoTaskModel[]> GetTasksForUserAsync()
@@ -28,7 +28,7 @@ public class TodoTaskService : ITodoTaskService
         var response = await this.helper.CallApiWithTokenAsync(async client => await client.GetAsync("api/task/user"));
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<TodoTaskModel[]>(result);
+        return JsonSerializer.Deserialize<TodoTaskModel[]>(result)!;
     }
 
     public async Task<TodoTaskDetailsModel> GetTaskAsync(Guid taskId)
@@ -36,7 +36,7 @@ public class TodoTaskService : ITodoTaskService
         var response = await this.helper.CallApiWithTokenAsync(async client => await client.GetAsync($"api/task/{taskId}"));
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<TodoTaskDetailsModel>(result);
+        return JsonSerializer.Deserialize<TodoTaskDetailsModel>(result)!;
     }
 
     public async Task CreateTaskAsync(TodoTaskPostModel task)
@@ -68,6 +68,6 @@ public class TodoTaskService : ITodoTaskService
         var response = await this.helper.CallApiWithTokenAsync(async client => await client.GetAsync("api/task/overdue"));
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<TodoTaskModel[]>(result);
+        return JsonSerializer.Deserialize<TodoTaskModel[]>(result)!;
     }
 }

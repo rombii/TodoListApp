@@ -9,5 +9,5 @@ public class TodoListUserDbContext : DbContext
     {
     }
 
-    public DbSet<TodoListUserEntity> Users { get; set; }
+    public DbSet<TodoListUserEntity>? Users { get; set; }
 }
