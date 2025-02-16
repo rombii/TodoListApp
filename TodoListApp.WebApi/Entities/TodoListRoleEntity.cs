@@ -8,12 +8,12 @@ public class TodoListRoleEntity
     [ForeignKey("List")]
     public Guid ListId { get; set; }
 
-    public TodoListEntity List { get; set; }
+    public TodoListEntity List { get; set; } = null!;
 
-    public string User { get; set; }
+    public string User { get; set; } = null!;
 
     [ForeignKey("Role")]
     public Guid RoleId { get; set; }
 
-    public RoleEntity Role { get; set; }
+    public RoleEntity Role { get; set; } = null!;
 }

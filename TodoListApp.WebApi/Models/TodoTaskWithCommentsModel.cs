@@ -2,5 +2,5 @@
 
 public class TodoTaskWithCommentsModel : TodoTaskModel
 {
-    public List<TaskCommentModel> Comments { get; set; }
+    public List<TaskCommentModel> Comments { get; set; } = null!;
 }

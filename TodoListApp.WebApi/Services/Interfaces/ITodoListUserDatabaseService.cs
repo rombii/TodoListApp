@@ -2,7 +2,6 @@
 using TodoListApp.WebApi.Models;
 using TodoListApp.WebApi.Models.Post;
 
-
 public interface ITodoListUserDatabaseService
 {
     Task<TodoListUserModel> Login(TodoListUserLoginModel model);

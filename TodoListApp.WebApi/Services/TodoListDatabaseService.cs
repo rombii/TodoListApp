@@ -8,7 +8,6 @@ using TodoListApp.WebApi.Models.Post;
 using TodoListApp.WebApi.Models.Put;
 using TodoListApp.WebApi.Services.Interfaces;
 
-
 public class TodoListDatabaseService : ITodoListDatabaseService
 {
     private readonly TodoListDbContext listDbContext;
@@ -34,7 +33,6 @@ public class TodoListDatabaseService : ITodoListDatabaseService
                 .Any(role => role.ListId == todoList.Id && role.User == issuer))
             .ToListAsync();
 
-
         return this.mapper.Map<List<TodoListModel>>(entities);
     }
 
@@ -53,7 +51,7 @@ public class TodoListDatabaseService : ITodoListDatabaseService
         var role = new TodoListRoleEntity
         {
             Id = Guid.NewGuid(),
-            User = issuer,
+            User = issuer!,
             ListId = listGuid,
             RoleId = (await this.listDbContext.Role.FirstAsync(role => role.Role == "Owner")).Id,
         };

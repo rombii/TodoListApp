@@ -2,7 +2,7 @@
 
 public class TaskTagPostModel
 {
-    public string Tag { get; set; }
+    public string Tag { get; set; } = null!;
 
     public Guid ListId { get; set; }
 }

@@ -1,6 +1,4 @@
-﻿
-namespace TodoListApp.WebApi.Entities;
-
+﻿namespace TodoListApp.WebApi.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,15 +10,15 @@ public class TodoListEntity
 
     [Required]
     [MaxLength(100)]
-    public string Title { get; set; }
+    public string Title { get; set; } = null!;
 
     [MaxLength(500)]
-    public string Description { get; set; }
+    public string Description { get; set; } = null!;
 
     [Required]
     public DateTime CreatedDate { get; set; }
 
-    public List<TodoListRoleEntity> ListRoles { get; set; }
+    public List<TodoListRoleEntity> ListRoles { get; set; } = null!;
 
-    public List<TaskTagEntity> Tags { get; set; }
+    public List<TaskTagEntity> Tags { get; set; } = null!;
 }

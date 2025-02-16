@@ -2,5 +2,5 @@
 
 public class TodoListUserModel
 {
-    public string AccessToken { get; set; }
+    public string AccessToken { get; set; } = null!;
 }

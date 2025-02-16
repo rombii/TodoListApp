@@ -2,7 +2,6 @@
 using TodoListApp.WebApi.Models;
 using TodoListApp.WebApi.Models.Post;
 
-
 public interface ITaskTagDatabaseService
 {
     Task<List<TaskTagModel>> GetAllTagsForList(Guid listId, string? issuer);

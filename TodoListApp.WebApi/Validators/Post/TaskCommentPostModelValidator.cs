@@ -1,4 +1,4 @@
-﻿namespace TodoListApp.WebApi.Validators;
+﻿namespace TodoListApp.WebApi.Validators.Post;
 using FluentValidation;
 using TodoListApp.WebApi.Models.Post;
 

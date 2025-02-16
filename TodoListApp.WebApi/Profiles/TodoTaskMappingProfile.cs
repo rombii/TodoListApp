@@ -4,7 +4,6 @@ using TodoListApp.WebApi.Entities;
 using TodoListApp.WebApi.Models;
 using TodoListApp.WebApi.Models.Post;
 
-
 public class TodoTaskMappingProfile : Profile
 {
     public TodoTaskMappingProfile()

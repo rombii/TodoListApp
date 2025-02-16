@@ -4,7 +4,7 @@ public class TodoTaskModel
 {
     public Guid Id { get; set; }
 
-    public string Title { get; set; }
+    public string Title { get; set; } = null!;
 
     public bool IsCompleted { get; set; }
 
@@ -14,6 +14,5 @@ public class TodoTaskModel
 
     public Guid ListId { get; set; }
 
-    public List<TaskTagModel> Tags { get; set; }
-
+    public List<TaskTagModel> Tags { get; set; } = null!;
 }

@@ -65,10 +65,13 @@ public class AuthController : Controller
                 var errorResponse = await response.Content.ReadAsStringAsync();
                 var errors = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(errorResponse);
 
-                foreach (var error in errors)
+                if (errors != null)
                 {
-                    var errorMessages = string.Join("<br />", error.Value);
-                    this.ModelState.AddModelError(error.Key, errorMessages);
+                    foreach (var error in errors)
+                    {
+                        var errorMessages = string.Join("<br />", error.Value);
+                        this.ModelState.AddModelError(error.Key, errorMessages);
+                    }
                 }
             }
             else

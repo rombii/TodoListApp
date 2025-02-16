@@ -2,7 +2,7 @@
 
 public class TodoTaskPostModel
 {
-    public string Title { get; set; }
+    public string Title { get; set; } = null!;
 
     public DateTime DueDate { get; set; }
 

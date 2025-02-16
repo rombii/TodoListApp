@@ -1,8 +1,8 @@
 #pragma warning disable SA1200
 using System.Text;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -13,6 +13,7 @@ using TodoListApp.WebApi.Generators.Settings;
 using TodoListApp.WebApi.Middleware;
 using TodoListApp.WebApi.Services;
 using TodoListApp.WebApi.Services.Interfaces;
+using TodoListApp.WebApi.Validators;
 #pragma warning restore SA1200
 
 var builder = WebApplication.CreateBuilder(args);
@@ -97,7 +98,6 @@ builder.Services.AddAuthentication("Bearer")
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"])),
         };
     });
-
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()

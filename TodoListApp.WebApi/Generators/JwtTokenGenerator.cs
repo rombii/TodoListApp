@@ -19,9 +19,9 @@ public class JwtTokenGenerator
     {
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, userLogin),
-            new(JwtRegisteredClaimNames.Sub, userLogin),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new (ClaimTypes.NameIdentifier, userLogin),
+            new (JwtRegisteredClaimNames.Sub, userLogin),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.settings.SecretKey));
@@ -54,7 +54,6 @@ public class JwtTokenGenerator
             var tokenHandler = new JwtSecurityTokenHandler();
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
 
-            // Validate the token format
             if (!(securityToken is JwtSecurityToken jwtSecurityToken)
                 || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {

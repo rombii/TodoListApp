@@ -85,10 +85,10 @@ public class TodoListController : Controller
         return this.View("Index");
     }
 
-    private async Task<IActionResult> RedirectToLogin()
+    private Task<IActionResult> RedirectToLogin()
     {
-        return this.HttpContext.Session.TryGetValue("AccessToken", out _) ?
+        return Task.FromResult<IActionResult>(this.HttpContext.Session.TryGetValue("AccessToken", out _) ?
             this.RedirectToAction("Index", "Home") :
-            this.RedirectToAction("Login", "Auth");
+            this.RedirectToAction("Login", "Auth"));
     }
 }

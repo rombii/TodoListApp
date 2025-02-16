@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.WebApi.Entities;
 
-
 public class TodoListUserDbContext : DbContext
 {
     public TodoListUserDbContext(DbContextOptions<TodoListUserDbContext> options)

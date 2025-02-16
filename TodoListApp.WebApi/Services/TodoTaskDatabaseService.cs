@@ -179,5 +179,4 @@ public class TodoTaskDatabaseService : ITodoTaskDatabaseService
 
         return this.mapper.Map<List<TodoTaskModel>>(entities);
     }
-
 }

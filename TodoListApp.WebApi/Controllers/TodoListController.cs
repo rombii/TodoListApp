@@ -19,6 +19,10 @@ public class TodoListController : ControllerBase
         this.dbService = dbService;
     }
 
+    /// <summary>
+    /// Gets all todolists for the authenticated user.
+    /// </summary>
+    /// <returns>A list of todolists.</returns>
     [HttpGet]
     public async Task<IActionResult> GetTodoListsUserAsync()
     {
@@ -27,6 +31,11 @@ public class TodoListController : ControllerBase
         return this.Ok(todoLists);
     }
 
+    /// <summary>
+    /// Creates a new todolist.
+    /// </summary>
+    /// <param name="todoList">The new todolist model.</param>
+    /// <returns>No content.</returns>
     [HttpPost]
     public async Task<IActionResult> CreateTodoListAsync([FromBody] TodoListPostModel todoList)
     {
@@ -35,6 +44,11 @@ public class TodoListController : ControllerBase
         return this.NoContent();
     }
 
+    /// <summary>
+    /// Updates an existing todolist.
+    /// </summary>
+    /// <param name="todoList">The updated todolist model.</param>
+    /// <returns>No content.</returns>
     [HttpPut]
     public async Task<IActionResult> UpdateTodoListAsync([FromBody] TodoListPutModel todoList)
     {
@@ -43,6 +57,11 @@ public class TodoListController : ControllerBase
         return this.NoContent();
     }
 
+    /// <summary>
+    /// Deletes a todolist by its ID.
+    /// </summary>
+    /// <param name="listId">The ID of the todolist to delete.</param>
+    /// <returns>No content.</returns>
     [HttpDelete("{listId:guid}")]
     public async Task<IActionResult> DeleteTodoListAsync(Guid listId)
     {

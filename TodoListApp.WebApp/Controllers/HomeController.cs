@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 public class HomeController : Controller
 {
-    public async Task<IActionResult> Index()
+    public Task<IActionResult> Index()
     {
-        return this.View();
+        return Task.FromResult<IActionResult>(this.View());
     }
 }
